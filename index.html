@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ndot-font-logo-gen</title>
+  <style>
+    @font-face { font-family: 'Ndot55'; src: url('https://raw.githubusercontent.com/xeji01/nothingfont/refs/heads/main/fonts/Ndot55-Regular.otf') format('opentype'); }
+    @font-face { font-family: 'Ndot55Caps'; src: url('https://raw.githubusercontent.com/xeji01/nothingfont/refs/heads/main/fonts/Ndot55Caps-Regular.otf') format('opentype'); }
+    @font-face { font-family: 'Ndot57'; src: url('https://raw.githubusercontent.com/xeji01/nothingfont/refs/heads/main/fonts/Ndot57-Regular.otf') format('opentype'); }
+    @font-face { font-family: 'Ndot57Caps'; src: url('https://raw.githubusercontent.com/xeji01/nothingfont/refs/heads/main/fonts/Ndot57Caps-Regular.otf') format('opentype'); }
+    @font-face { font-family: 'NType82'; src: url('https://raw.githubusercontent.com/xeji01/nothingfont/refs/heads/main/fonts/NType82-Regular.otf') format('opentype'); }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background: #0a0a0a;
+      color: #ccc;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 48px;
+      padding: 60px 48px;
+      width: 100%;
+      max-width: 1500px;
+    }
+
+    /* INFO */
+    .info-panel {
+      width: 175px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-top: 4px;
+    }
+    .info-title { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #444; }
+    .info-panel p { font-size: 11px; line-height: 1.75; color: #333; }
+    .info-panel p strong { color: #494949; }
+    .info-divider { border: none; border-top: 1px solid #1a1a1a; }
+
+    /* CONTROLS OUTER */
+    .controls-outer {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex-shrink: 0;
+      width: 580px;
+    }
+
+    .controls-title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #555; line-height: 1.5; }
+
+    .lines-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* LINE BLOCK */
+    .line-block {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      padding: 12px;
+      border: 1px solid #1c1c1c;
+      border-radius: 4px;
+      background: #0d0d0d;
+    }
+
+    .line-block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .line-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #555; }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #2e2e2e;
+      font-family: monospace;
+      font-size: 11px;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.15s;
+    }
+    .remove-btn:hover { color: #888; }
+
+    .field { display: flex; flex-direction: column; gap: 4px; }
+    .field label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #3a3a3a; }
+
+    /* unified input style */
+    input[type="text"], select {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 3px;
+      color: #aaa;
+      font-family: monospace;
+      font-size: 12px;
+      padding: 7px 9px;
+      outline: none;
+      transition: border-color 0.15s;
+      width: 100%;
+      -webkit-appearance: none;
+    }
+    input[type="text"]:focus, select:focus { border-color: #444; color: #fff; }
+    input[type="text"]::placeholder { color: #2a2a2a; }
+    select { cursor: pointer; }
+    select option { background: #111; color: #aaa; }
+
+    .size-row { display: flex; flex-direction: column; gap: 4px; }
+    .size-row label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #3a3a3a; }
+
+    .slider-track {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .slider-track input[type="range"] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 2px;
+      background: #222;
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+      padding: 0;
+      width: auto;
+      border: none;
+      color: unset;
+    }
+    .slider-track input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      background: #555;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .slider-track input[type="range"]::-webkit-slider-thumb:hover { background: #aaa; }
+    .slider-val { font-size: 11px; color: #555; width: 26px; text-align: right; flex-shrink: 0; }
+
+    .bottom-row { display: flex; align-items: center; gap: 6px; }
+    .step-btns { display: flex; gap: 3px; flex: 1; }
+
+    .step-btn, .add-line-btn, .add-credit-btn {
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 3px;
+      color: #444;
+      font-family: monospace;
+      font-size: 10px;
+      padding: 3px 6px;
+      cursor: pointer;
+      transition: color 0.12s, border-color 0.12s;
+      white-space: nowrap;
+    }
+    .step-btn:hover, .add-line-btn:hover, .add-credit-btn:hover { color: #ccc; border-color: #444; }
+
+    /* color wrap — only swatch + hex, no full-width override */
+    .color-wrap { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+
+    .color-swatch {
+      width: 22px; height: 22px;
+      border-radius: 3px;
+      border: 1px solid #2a2a2a;
+      cursor: pointer;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .color-swatch input[type="color"] {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      border: none;
+      padding: 0;
+    }
+
+    .hex-input {
+      width: 70px !important;
+      font-size: 10px !important;
+      padding: 3px 6px !important;
+    }
+
+    .divider { border: none; border-top: 1px solid #181818; }
+
+    /* BELOW GRID */
+    .below-grid { display: flex; flex-direction: column; gap: 10px; }
+
+    .add-line-btn {
+      font-size: 11px;
+      padding: 7px 10px;
+      color: #3a3a3a;
+      text-align: left;
+      width: 100%;
+    }
+
+    /* CREDIT SECTION */
+    .credit-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid #1c1c1c;
+      border-radius: 4px;
+      background: #0d0d0d;
+    }
+
+    .credit-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .credit-rows { display: flex; flex-direction: column; gap: 7px; }
+
+    .credit-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .credit-row input[type="text"] {
+      flex: 1;
+    }
+
+    .credit-remove-btn {
+      background: none;
+      border: none;
+      color: #2e2e2e;
+      font-family: monospace;
+      font-size: 11px;
+      cursor: pointer;
+      transition: color 0.15s;
+      flex-shrink: 0;
+    }
+    .credit-remove-btn:hover { color: #888; }
+
+    .add-credit-btn {
+      font-size: 10px;
+      padding: 4px 8px;
+      align-self: flex-start;
+    }
+
+    /* LOGO BOX */
+    .logo-box {
+      width: 512px;
+      height: 512px;
+      min-width: 512px;
+      min-height: 512px;
+      max-width: 512px;
+      max-height: 512px;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 0 56px;
+      outline: 1px solid #222;
+    }
+
+    .logo-line {
+      letter-spacing: 0.03em;
+      display: block;
+      white-space: nowrap;
+    }
+
+    .logo-credit-line {
+      font-family: monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: block;
+    }
+
+    .page-footer { text-align: center; padding: 20px; font-size: 10px; color: #282828; letter-spacing: 0.06em; }
+    .page-footer a { color: #333; text-decoration: none; }
+    .page-footer a:hover { color: #666; }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="info-panel">
+    <span class="info-title">About</span>
+    <p>The black box is 512x512 pixels big. A popular standard size for app icons and logos.</p>
+    <hr class="info-divider">
+    <span class="info-title">How to save</span>
+    <p><strong>Firefox</strong><br>Right-click the black box, click <strong>Take Screenshot</strong>, select the box area, then Download.</p>
+    <p><strong>Other Browsers</strong><br>Idk</strong>.</p>
+  </div>
+
+  <div class="controls-outer">
+    <span class="controls-title">Ndot Font<br>Logo Generator</span>
+    <div class="lines-grid" id="linesGrid"></div>
+    <div class="below-grid">
+      <button class="add-line-btn" id="addBtn">+ add line</button>
+      <hr class="divider">
+      <!-- CREDIT SECTION -->
+      <div class="credit-section">
+        <div class="credit-section-header">
+          <span class="line-label">Credit Lines</span>
+          <button class="add-credit-btn" id="addCreditBtn">+ add</button>
+        </div>
+        <div class="credit-rows" id="creditRows"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="logo-box" id="logoBox"></div>
+
+</div>
+
+<footer class="page-footer">
+  Typeface by <a href="https://nothing.tech" target="_blank">NOTHING Tech</a>
+  &nbsp;·&nbsp;
+  Font files via <a href="https://github.com/xeji01/nothingfont" target="_blank">xeji01/nothingfont</a>
+</footer>
+
+<script>
+const MAX_LINES = 4;
+const MAX_CREDITS = 2;
+const FONTS = ['Ndot55','Ndot55Caps','Ndot57','Ndot57Caps','NType82'];
+const FONT_LABELS = ['Ndot-55','Ndot-55 Caps','Ndot-57','Ndot-57 Caps','NType-82'];
+
+let lines = [
+  { text: 'EXAMPLE', font: 'Ndot57', size: 100, spacing: 0.82, color: '#ffffff' },
+];
+
+let credits = [];
+
+const grid        = document.getElementById('linesGrid');
+const addBtn      = document.getElementById('addBtn');
+const logoBox     = document.getElementById('logoBox');
+const creditRows  = document.getElementById('creditRows');
+const addCreditBtn= document.getElementById('addCreditBtn');
+
+function fontOptions(selected) {
+  return FONTS.map((f, i) =>
+    `<option value="${f}"${f === selected ? ' selected' : ''}>${FONT_LABELS[i]}</option>`
+  ).join('');
+}
+
+function renderControls() {
+  grid.innerHTML = '';
+
+  lines.forEach((line, idx) => {
+    const block = document.createElement('div');
+    block.className = 'line-block';
+    block.innerHTML = `
+      <div class="line-block-header">
+        <span class="line-label">Line ${idx + 1}</span>
+        ${lines.length > 1 ? `<button class="remove-btn" data-remove="${idx}">[remove]</button>` : ''}
+      </div>
+      <div class="field">
+        <label>Text</label>
+        <input type="text" class="line-text" data-idx="${idx}" value="${line.text}" maxlength="12" placeholder="text here">
+      </div>
+      <div class="field">
+        <label>Font</label>
+        <select class="line-font" data-idx="${idx}">${fontOptions(line.font)}</select>
+      </div>
+      <div class="size-row">
+        <label>Size</label>
+        <div class="slider-track">
+          <input type="range" class="line-size" data-idx="${idx}" min="16" max="200" value="${line.size}">
+          <span class="slider-val" id="sv${idx}">${line.size}</span>
+        </div>
+        <div class="bottom-row">
+          <div class="step-btns">
+            <button class="step-btn" data-step="-10" data-idx="${idx}">-10</button>
+            <button class="step-btn" data-step="-1"  data-idx="${idx}">-1</button>
+            <button class="step-btn" data-step="1"   data-idx="${idx}">+1</button>
+            <button class="step-btn" data-step="10"  data-idx="${idx}">+10</button>
+          </div>
+          <div class="color-wrap">
+            <div class="color-swatch" style="background:${line.color}">
+              <input type="color" class="line-colorpicker" data-idx="${idx}" value="${line.color}">
+            </div>
+            <input type="text" class="hex-input line-hexinput" data-idx="${idx}" value="${line.color}" maxlength="7">
+          </div>
+        </div>
+      </div>
+      <div class="size-row">
+        <label>Spacing</label>
+        <div class="slider-track">
+          <input type="range" class="line-spacing" data-idx="${idx}" min="0.5" max="2" step="0.05" value="${line.spacing}">
+          <span class="slider-val" id="sp${idx}">${line.spacing.toFixed(2)}</span>
+        </div>
+        <div class="bottom-row">
+          <div class="step-btns">
+            <button class="step-btn" data-stepsp="-0.1" data-idx="${idx}">-0.1</button>
+            <button class="step-btn" data-stepsp="-0.05" data-idx="${idx}">-.05</button>
+            <button class="step-btn" data-stepsp="0.05"  data-idx="${idx}">.05</button>
+            <button class="step-btn" data-stepsp="0.1"   data-idx="${idx}">+0.1</button>
+          </div>
+        </div>
+      </div>
+    `;
+    grid.appendChild(block);
+  });
+
+  addBtn.style.display = lines.length >= MAX_LINES ? 'none' : '';
+}
+
+function renderCreditControls() {
+  creditRows.innerHTML = '';
+  credits.forEach((c, idx) => {
+    const row = document.createElement('div');
+    row.className = 'credit-row';
+    row.innerHTML = `
+      <input type="text" class="credit-text" data-idx="${idx}" value="${c.text}" placeholder="credit text">
+      <div class="color-wrap">
+        <div class="color-swatch" style="background:${c.color}">
+          <input type="color" class="credit-colorpicker" data-idx="${idx}" value="${c.color}">
+        </div>
+        <input type="text" class="hex-input credit-hexinput" data-idx="${idx}" value="${c.color}" maxlength="7">
+      </div>
+      <button class="credit-remove-btn" data-cremove="${idx}">x</button>
+    `;
+    creditRows.appendChild(row);
+  });
+  addCreditBtn.style.display = credits.length >= MAX_CREDITS ? 'none' : '';
+}
+
+function renderLogo() {
+  logoBox.innerHTML = '';
+
+  lines.forEach((line, idx) => {
+    const span = document.createElement('span');
+    span.className = 'logo-line';
+    span.textContent = line.text;
+    span.style.fontFamily = `'${line.font}', monospace`;
+    span.style.fontSize = line.size + 'px';
+    span.style.lineHeight = line.spacing;
+    span.style.color = line.color;
+    span.style.display = line.text ? 'block' : 'none';
+    logoBox.appendChild(span);
+  });
+
+  if (credits.length > 0) {
+    const wrap = document.createElement('div');
+    wrap.style.marginTop = '10px';
+    credits.forEach(c => {
+      if (!c.text) return;
+      const p = document.createElement('span');
+      p.className = 'logo-credit-line';
+      p.textContent = c.text;
+      p.style.color = c.color;
+      wrap.appendChild(p);
+    });
+    logoBox.appendChild(wrap);
+  }
+}
+
+// MAIN LINE EVENTS
+grid.addEventListener('input', e => {
+  const t = e.target;
+  const idx = parseInt(t.dataset.idx);
+  if (isNaN(idx)) return;
+
+  if (t.classList.contains('line-text')) {
+    lines[idx].text = t.value;
+  } else if (t.classList.contains('line-font')) {
+    lines[idx].font = t.value;
+  } else if (t.classList.contains('line-size')) {
+    lines[idx].size = parseInt(t.value);
+    document.getElementById('sv' + idx).textContent = t.value;
+  } else if (t.classList.contains('line-spacing')) {
+    lines[idx].spacing = parseFloat(t.value);
+    document.getElementById('sp' + idx).textContent = parseFloat(t.value).toFixed(2);
+  } else if (t.classList.contains('line-colorpicker')) {
+    lines[idx].color = t.value;
+    t.closest('.color-swatch').style.background = t.value;
+    t.closest('.color-wrap').querySelector('.hex-input').value = t.value;
+  } else if (t.classList.contains('line-hexinput')) {
+    const val = t.value.startsWith('#') ? t.value : '#' + t.value;
+    if (/^#[0-9a-fA-F]{6}$/.test(val)) {
+      lines[idx].color = val;
+      t.closest('.color-wrap').querySelector('.line-colorpicker').value = val;
+      t.closest('.color-wrap').querySelector('.color-swatch').style.background = val;
+    }
+  }
+  renderLogo();
+});
+
+grid.addEventListener('click', e => {
+  const t = e.target;
+  if (t.dataset.remove !== undefined) {
+    lines.splice(parseInt(t.dataset.remove), 1);
+    renderControls(); renderLogo();
+  }
+  if (t.dataset.step !== undefined) {
+    const idx = parseInt(t.dataset.idx);
+    lines[idx].size = Math.min(200, Math.max(16, lines[idx].size + parseInt(t.dataset.step)));
+    renderControls(); renderLogo();
+  }
+  if (t.dataset.stepsp !== undefined) {
+    const idx = parseInt(t.dataset.idx);
+    lines[idx].spacing = Math.min(2, Math.max(0.5, +(lines[idx].spacing + parseFloat(t.dataset.stepsp)).toFixed(2)));
+    renderControls(); renderLogo();
+  }
+});
+
+addBtn.addEventListener('click', () => {
+  if (lines.length < MAX_LINES) {
+    lines.push({ text: '', font: 'Ndot57', size: 100, spacing: 0.82, color: '#ffffff' });
+    renderControls(); renderLogo();
+  }
+});
+
+// CREDIT EVENTS
+creditRows.addEventListener('input', e => {
+  const t = e.target;
+  const idx = parseInt(t.dataset.idx);
+  if (isNaN(idx)) return;
+
+  if (t.classList.contains('credit-text')) {
+    credits[idx].text = t.value;
+  } else if (t.classList.contains('credit-colorpicker')) {
+    credits[idx].color = t.value;
+    t.closest('.color-swatch').style.background = t.value;
+    t.closest('.color-wrap').querySelector('.hex-input').value = t.value;
+  } else if (t.classList.contains('credit-hexinput')) {
+    const val = t.value.startsWith('#') ? t.value : '#' + t.value;
+    if (/^#[0-9a-fA-F]{6}$/.test(val)) {
+      credits[idx].color = val;
+      t.closest('.color-wrap').querySelector('.credit-colorpicker').value = val;
+      t.closest('.color-wrap').querySelector('.color-swatch').style.background = val;
+    }
+  }
+  renderLogo();
+});
+
+creditRows.addEventListener('click', e => {
+  const t = e.target;
+  if (t.dataset.cremove !== undefined) {
+    credits.splice(parseInt(t.dataset.cremove), 1);
+    renderCreditControls(); renderLogo();
+  }
+});
+
+addCreditBtn.addEventListener('click', () => {
+  if (credits.length < MAX_CREDITS) {
+    credits.push({ text: '', color: '#444444' });
+    renderCreditControls(); renderLogo();
+  }
+});
+
+renderControls();
+renderCreditControls();
+renderLogo();
+</script>
+</body>
+</html>
