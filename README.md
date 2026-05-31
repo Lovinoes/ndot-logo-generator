@@ -1,5 +1,5 @@
 # ndot-logo-generator
-Small vibecoded HTML logo generator using claude-ai, using the Nothing fonts. Hosted on GitHub.
+Small vibecoded HTML logo generator using the Nothing fonts.
 
 https://lovinoes.github.io/ndot-logo-generator/
 
