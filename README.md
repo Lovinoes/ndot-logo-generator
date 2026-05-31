@@ -1,4 +1,5 @@
 # ndot-logo-generator
+# W.I.P
 Small, vibe-coded HTML logo generator using the Nothing fonts.
 
 https://lovinoes.github.io/ndot-logo-generator/
